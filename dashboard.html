@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+  	<script src="js/app.js" type="text/javascript"></script>
+	<script src="js/maincontroller.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id='content' ng-app='MyTutorialApp' ng-controller='MainController'>
+		<div>
+			Cluster: </br>
+			  <select ng-model="selectedSolrCluster" ng-options="cluster.name for cluster in solrCluster" ng-change="clusterChanged()"></select> 
+		</div>
+		<div>
+			Cluster Url: </br>
+			<input type='text' ng-model='selectedSolrCluster.url' size="100"/>
+        	<button ng-click='clusterChanged()'>Search</button>
+		</div>
+		<div>
+			Cores: </br>
+			  <select ng-model="selectedCore" ng-options="coreName for (coreName, status) in solrCores.status" ng-change="search()"></select> {{selectedCore.name}}
+		</div>
+		<div>
+			<ul>
+            	<li ng-repeat='(paramName, paramValue) in solr.responseHeader.params'>
+            		{{angular.isDefined(paramValue)}}{{paramName}} -> {{paramValue}}
+            	</li>
+        	</ul>
+		</div>
+		<div>
+			Anfrage: </br>
+			<input type='text' ng-model='solrQuery' />
+        	<button ng-click='searchQuery()'>Search</button>
+		</div>
+		<div>
+			Anzahl Ergebnisse: </br>
+			<input type='number' ng-model='solrRows' />
+        	<button ng-click='search()'>Search</button>
+		</div>
+		<div>
+			Customer Solr Query Url: </br>
+			<textarea ng-model="solrUrl" cols="60" rows="3"></textarea>
+        	<button ng-click='searchWithSolrUrl()'>Search</button>
+		</div>
+		<div>
+			<a href="{{currentSolrUrl}}">Solr Url</a>
+			<a href="{{selectedSolrCluster.url}}/#/{{selectedCore.name}}">Solr Admin Url</a>
+			<a href="{{selectedSolrCluster.url}}/#/{{selectedCore.name}}/schema">Solr Schmea Url</a>
+		</div>
+		<div>
+			<div>
+				Ergebnisse (  {{solr.response.numFound}}) 
+				<button ng-click='firstPage()'>|<-</button>
+				<button ng-click='previousPage()'><-</button> 
+				<button ng-click='nextPage()'>-></button>
+				<button ng-click='lastPage()'>->|</button>
+				<ul>
+	            	<li ng-repeat='result in solr.response.mappedDocs'>
+	            		{{$index + 1 + solrStart}}:
+	            		<a href="{{result.url}}"> {{result.title}} </a></br>
+	            		<img style="max-width:250px;max-height:150px;" src="{{result.thumb}}"> {{result.description}}
+	            	</li>
+	        	</ul>
+        	<div>
+        	<div>
+				Felder
+				<ul>
+	            	<li ng-repeat='(fieldName, fieldValue) in solr.response.docs[0]'>
+	            		{{fieldName}} -> {{fieldValue}}
+	            	</li>
+	        	</ul>
+        	<div>
+
+
+        	<div ng-repeat='(facetName, facets) in solr.facet_counts.facet_fields'>
+        		{{facetName}}
+	        	<ul>
+	            	<li ng-repeat='facet in facets'>{{facet[0]}} ({{facet[1]}})</li>
+	        	</ul>
+        	</div>
+		</div>	
+
+	</div>
+
+
+  </body>
+</html>
